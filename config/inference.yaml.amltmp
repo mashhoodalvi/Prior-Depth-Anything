@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+display_name: prior-depth-inference
+experiment_name: diffusion-models
+
+
+command: >
+  bash -c "python test.py --input_rgb=${{inputs.data}}/input_rgb.png --prior_depth=${{inputs.data}}/depth_gt_mm.png"
+
+code: ..
+
+inputs:
+  data:
+    type: uri_folder
+    # use registered data asset by name:version (or set a direct azureml:// path)
+    path: azureml:prior_depth_test:1
+    mode: ro_mount
+
+outputs:
+  model_dir:
+    type: uri_folder
+
+environment: azureml:diffusion-finetune:7
+compute: mashhood-alvi-gpu

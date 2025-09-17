@@ -8,7 +8,7 @@ import matplotlib
 @dataclass
 class Arguments:
     K: int = field(
-        default=5, 
+        default=4, 
         metadata={"help": "K value of KNN"}
     )
     conditioned_model_size: str = field(
@@ -35,7 +35,7 @@ class Arguments:
     repo_name: str = field(
         default='Rain729/Prior-Depth-Anything', metadata={"help": "Name of hf-repo."})
     log_dir: str = field(
-        default='output', metadata={"help": "The root path to save visualization results."})
+        default='outputs', metadata={"help": "The root path to save visualization results."})
     # down_fill_mode: str = field(
     #     default='linear', 
     #     metadata={
@@ -125,6 +125,12 @@ def log_img(image, path, valids=None, scale=None, shift=None):
         
     if scale is None:
         scale, shift = image.max() - image.min(), image.min()
+
+        # fixed bug
+    if torch.is_tensor(scale):
+        scale = scale.cpu().numpy()
+    if torch.is_tensor(shift):
+        shift = shift.cpu().numpy()
     
     normalized_value = (image - shift) / scale
     if "error" in path: normalized_value = 1 - normalized_value
